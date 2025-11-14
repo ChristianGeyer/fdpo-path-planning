@@ -80,9 +80,8 @@ class FactoryEnv:
             self.node_types[node] = 2*num_machines + 1  # output node type
 
         # validate inputs
-        #self._validate_init_inputs()
+        self._validate_init_inputs()
 
-    """
     def _validate_init_inputs(self):
         # check robot_initial_distances length
         assert len(self.robot_initial_distances) == self.num_robots, "robot_initial_distances length does not match num_robots"
@@ -110,4 +109,3 @@ class FactoryEnv:
        
         # check output node type
         assert all(self.node_types[node] == 2*self.num_machines + 1 for node in self.output_nodes), "Output nodes do not have correct type."
-        """
