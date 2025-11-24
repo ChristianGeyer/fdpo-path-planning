@@ -18,10 +18,23 @@ Train an agent using the reinforcement learning approach to optimize robot decis
 * src/: project packages
 * test/: tests for project packages
 
-## Next steps
-
-Implement (weighted) Graph logic:
+2) Implemented weighted Graph logic:
 * nodes
 * adjacency list with neighbors and weights
-* compute shortest distances
-* compute shortest paths
+* dijkstra's shortest distances and paths
+* tests
+
+## Next steps
+
+Implement Graph2d logic:
+* Node2d
+  * nodes with x, y, theta
+* Spline2d  
+  * connect two Node2d objects with a parameterized curve
+  * compute constant velocity parameterization
+  * compute arc-length
+  * compute expected traverse time based on curvature and max acceleration on curves (slower velocity on high curvature segments)
+* Graph2d
+  * list of Node2d nodes
+  * list of Spline2d edges
+  * Graph object with node-ids and weights
