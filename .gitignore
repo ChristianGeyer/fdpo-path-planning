@@ -3,3 +3,5 @@ access_token.txt
 __pycache__/
 # pytest
 .pytest_cache/
+# macOs 
+.DS_Store

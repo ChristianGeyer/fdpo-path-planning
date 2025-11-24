@@ -14,8 +14,7 @@ class Edge:
 
 
 class Graph:
-    """Weighted directed graph using an adjacency list."""
-
+    
     # --- constructor -----------------------------------------------------
     def __init__(self) -> None:
         # save adjacency list as a dict (node -> list of outgoing edges)
@@ -66,14 +65,17 @@ class Graph:
         # save the predecessor node along the shortest path
         prev: Dict[NodeId, Optional[NodeId]] = {source: None} # source node has no predecessor
         
+        # tiebreaker to avoid NodeId comparison
+        counter = 0
         # heapq is a min-heap
         # it uses a python list as the underlying data structure 
         # we will save (distance, node) tuples and keep the shortest distance at the top
-        pq: List[Tuple[float, NodeId]] = [(0.0, source)]
+        pq: List[Tuple[float, int, NodeId]] = [(0.0, counter, source)]
+        counter += 1
 
         while pq:
             # get the node (node_from) with the smallest distance (d)
-            d_from, node_from = heapq.heappop(pq)
+            d_from, _, node_from = heapq.heappop(pq)
             # check if this node was already reached
             if d_from > dist.get(node_from, float("inf")):
                 continue  # ignore outdated node
@@ -85,7 +87,8 @@ class Graph:
                 # check if a shorter path to neighbor was found
                 if d_to < dist.get(node_to, float("inf")): 
                     dist[node_to] = d_to # update distance
-                    heapq.heappush(pq, (d_to, node_to)) # add to priority queue
+                    heapq.heappush(pq, (d_to, counter, node_to)) # add to priority queue
+                    counter += 1
                     # save predecessor
                     prev[node_to] = node_from
         # return dict with shortest distances from source to all nodes
@@ -98,25 +101,24 @@ class Graph:
             end_node: NodeId,
             dist: Dict[NodeId, float],
             prev: Dict[NodeId, Optional[NodeId]]) -> Optional[List[NodeId]]:
+        
+        # check inputs
+        if dist is None or prev is None:
+            return None
         # check if end_node is reachable from start_node
         if end_node not in dist:
+            return None
+        # check if start node has distance 0
+        if dist[start_node] != 0:
             return None
 
         # rebuild path from end_node back to start_node
         path: List[NodeId] = []
         # start at end_node
         curr: NodeId = end_node
-        curr_d: float = dist[end_node]
         while curr != start_node:
             path.append(curr)
-            # iterate all neighbors
-            for edge in self.neighbors(curr):
-                next_node = edge.node_to # neighbor node
-                next_d =  curr_d - edge.weight # shortest dist of neighbor node
-                if next_d == dist[next_node]: # condition for being on the shortest path to end_node
-                    curr = next_node
-                    curr_d = next_d
-                    break
+            curr = prev[curr]
         path.append(start_node)
         path.reverse()
         return path
